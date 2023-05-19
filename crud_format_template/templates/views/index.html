@@ -1,0 +1,19 @@
+{{define "index.html"}}
+<html>
+    {{ template "header.html" }}
+    <body>
+        {{template "common_header.html"}}
+        {{range .tags}}
+        <p class="pra">
+            <span class="tags">{{.Name}}</span>
+            <a class="edit" href="/api/tags/update/{{.Id}}">Edit</a>
+            <form action="/api/tags/{{.Id}}" method="delete">
+                <button type="submit">Delete</button>
+            </form>
+
+        </p>
+        {{end}}
+        {{ template "footer.html" }}
+    </body>
+</html>
+{{end}}

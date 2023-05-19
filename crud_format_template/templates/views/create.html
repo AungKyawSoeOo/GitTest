@@ -1,0 +1,18 @@
+{{define "create.html"}}
+<html>
+    {{ template "header.html" }}
+    <body>
+        {{template "common_header.html"}}
+        <h2>Create</h2>
+        <form action="/api/tags/" method="post" class="createForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            {{ with .Errors.Name }}
+            <p class="error">{{ . }}</p>
+            {{ end }}
+            <button type="submit">Create</button>
+        </form>
+        {{ template "footer.html" }}
+    </body>
+</html>
+{{end}}
