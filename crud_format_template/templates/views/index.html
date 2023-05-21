@@ -3,13 +3,33 @@
     {{ template "header.html" }}
     <body>
         {{template "common_header.html"}}
+        <script>
+            function sendDelete(event,href) {
+                var xttp=new XMLHttpRequest();
+                event.preventDefault();
+                xttp.onreadystatechange=function(){
+                    // return if not ready state ->4
+                    if(this.readyState!==4){
+                        return;
+                    }
+                    if(this.readyState===4){
+                        // Redirect the page
+                        window.location.replace(this.responseURL);
+                    }
+                }
+                xttp.open("DELETE",href,true);
+                xttp.send();
+              }
+        </script>
         {{range .tags}}
         <p class="pra">
             <span class="tags">{{.Name}}</span>
             <a class="edit" href="/api/tags/update/{{.Id}}">Edit</a>
-            <form action="/api/tags/{{.Id}}" method="delete">
+            <!-- <form action="/api/tags/{{.Id}}" method="post">
+                <input type="hidden" name="_method" value="DELETE">
                 <button type="submit">Delete</button>
-            </form>
+            </form> -->
+            <a class="delete" href="/api/tags/{{.Id}}" onclick="sendDelete(event,this.href)">Delete</a>
 
         </p>
         {{end}}

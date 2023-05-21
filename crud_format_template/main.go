@@ -20,13 +20,20 @@ func main() {
 	db := config.ConnectDatabase()
 	validate := validator.New()
 	db.Table("tags").AutoMigrate(&model.Tags{})
+	db.Table("users").AutoMigrate(&model.User{})
 
-	tagsRepository := repository.NewTagsRepositoryImpl(db)
+	// Users
+	userInterface := repository.NewUsersInterfaceImpl(db)
+	authService := service.NewAuthServiceImpl(userInterface, validate)
+	authController := controller.NewAuthController(authService)
+	userController := controller.NewUsercontroller(userInterface)
 
-	tagsService := service.NewTagsRepositoryImpl(tagsRepository, validate)
-
+	// Tags
+	tagsInterface := repository.NewTagsRepositoryImpl(db)
+	tagsService := service.NewTagsRepositoryImpl(tagsInterface, validate)
 	tagsController := controller.NewTagsController(tagsService)
-	routes := router.NewRouter(tagsController)
+
+	routes := router.NewRouter(authController, userController, tagsController, userInterface)
 
 	server := &http.Server{
 		Addr:    ":8080",

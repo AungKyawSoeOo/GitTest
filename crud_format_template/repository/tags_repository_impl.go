@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"gin_test/crud_format_template/data/request"
 	"gin_test/crud_format_template/helper"
 	"gin_test/crud_format_template/model"
@@ -58,6 +59,7 @@ func (t *TagsRepositoryImpl) Update(tags model.Tags) {
 		Id:   tags.Id,
 		Name: tags.Name,
 	}
+	fmt.Println("dkjakkk")
 	result := t.Db.Model(&tags).Updates(updateTag)
 	helper.ErrorPanic(result.Error)
 }

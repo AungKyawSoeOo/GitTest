@@ -63,12 +63,19 @@ func (controller *TagsController) Create(ctx *gin.Context) {
 // update controller
 func (controller *TagsController) Update(ctx *gin.Context) {
 	tagId := ctx.Param("tagId")
+	name := ctx.PostForm("name")
+	fmt.Println(tagId)
 	id, err := strconv.Atoi(tagId)
 	fmt.Println(id, "ffopposfusfiugpfsogffssf")
 	helper.ErrorPanic(err)
-	updateTagsRequest := request.UpdateTagsRequest{
-		Id: id,
+	if method := ctx.Request.Header.Get("X-HTTP-Method-Override"); method == "PUT" {
+		ctx.Request.Method = "PUT"
 	}
+	updateTagsRequest := request.UpdateTagsRequest{
+		Id:   id,
+		Name: name,
+	}
+	// fmt.Printf("Update request: %+v\n", updateTagsRequest)
 
 	if err := ctx.ShouldBind(&updateTagsRequest); err != nil {
 		ctx.HTML(http.StatusBadRequest, "update.html", gin.H{
@@ -86,14 +93,9 @@ func (controller *TagsController) Delete(ctx *gin.Context) {
 	tagId := ctx.Param("tagId")
 	id, err := strconv.Atoi(tagId)
 	helper.ErrorPanic(err)
+	// Check for method override header
 	controller.tagsService.Delete(id)
-	webResponse := response.Response{
-		Code:   http.StatusOK,
-		Status: "Ok",
-		Data:   nil,
-	}
-	ctx.Header("Content-Type", "application/json")
-	ctx.JSON(http.StatusOK, webResponse)
+	ctx.Redirect(http.StatusFound, "/api/tags")
 }
 
 // findById controller
@@ -113,6 +115,12 @@ func (controller *TagsController) FindById(ctx *gin.Context) {
 
 // findAll controller
 func (controller *TagsController) FindAll(ctx *gin.Context) {
+	cookie, err := ctx.Request.Cookie("token")
+	fmt.Println(cookie)
+	if err != nil || cookie.Value == "" {
+		fmt.Print("No token")
+		return
+	}
 	tagResponse := controller.tagsService.FindAll()
 	ctx.HTML(http.StatusOK, "index.html", gin.H{
 		"tags": tagResponse,
