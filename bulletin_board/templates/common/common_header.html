@@ -1,0 +1,14 @@
+{{define "common_header.html"}}
+<header>I am header</header>
+<div>
+    <ul>
+        <li><a href="/tags">Home</a></li>
+        <li><a href="/tags/create">Posts Create</a></li>
+        <li>
+            <form action="/auth/logout" method="post">
+                <button type="submit">Logout</button>
+            </form>
+        </li>
+    </ul>
+</div>
+{{end}}
